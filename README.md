@@ -1,3 +1,84 @@
+Steps to Deploy and Use the Application
+
+1. Clone the application repository from the Git source.
+
+2. Build the mta.yaml file using one of the following methods:
+
+         mbt build or
+
+         Right-click the project in your IDE and select: "Build MTA Project" This process generates a .mtar file.
+
+3. Deploy the generated .mtar file to your Cloud Foundry space.
+
+4. Post-Deployment Configuration
+
+      a. Update xs-security.json  After deployment:
+
+            Copy the deployed application's URL.
+
+            Add the following section after roles-template in xs-security.json:
+   
+                      "oauth2-configuration": {
+                           "redirect-uris": [
+                                 "<Deployed-Application-URL>/**"
+                               ]
+                           }
+
+                 Example URL:  https://4a13cd20trial-dev-customassemblypod.cfapps.us10-001.hana.ondemand.com
+
+       b. Configure Destination in BTP Trial Account
+
+             Open xs-app.json and locate the destination field. Create a destination in your BTP Trial account that matches the name exactly.
+
+             Destination Details:
+
+                   Name: ASSEMBLY_POD_DEST (can be customized, but must match xs-app.json)
+
+                   Type: HTTP
+
+                   Authentication: OAuth2ClientCredentials
+
+                   Client ID: [Provided in service key]
+
+                   Client Secret: [Provided in service key]
+
+                   Proxy Type: Internet
+
+                   URL: Public API Endpoint
+
+                  Token Service URL: <Service-URL>/oauth/token
+
+                  Additional Property:
+
+                        Key: HTML5.DynamicDestination
+
+                        Value: true
+
+                  Note: You can find the client credentials in your RITS DMC subaccount under Instances and Subscriptions > [Your Instance] > Service Key of SAP DMC Execution.
+
+5. Prepare Application Launch URL
+
+       Create the final URL in this format:  <Deployed Application URL>/<welcomeFile from xs-app.json>?WORK_CENTER=<Work Center>&RESOURCE=<Resource>&PLANT=<Plant>
+
+       Example:  https://4a13cd20trial-dev-customassemblypod.cfapps.us10-001.hana.ondemand.com/ui/index.html?WORK_CENTER=MOBILE-WC1&RESOURCE=MOBILE-R1&PLANT=MB01
+
+       Open this URL in a new browser tab to launch the application.
+
+6. Use the Application
+
+     Enter the SFC and press Enter.
+
+     If the SFC is not started, it will start automatically and navigate to the Assembly screen.
+
+     In the scan input field, enter the component to be assembled.
+
+     Once all components are scanned, the Flag button will become active.
+
+     Click the Flag to complete the SFC.
+
+        ⚠️ Note: If you're unable to complete the SFC, it might be due to user restrictions.To fix this, go to the Manage Resources app in DMC and enable the Process Resource option for your user. Then, retry              completing the SFC.
+
+
 # AssemblyPOD
 
 The Assembly Template POD is a UI5 application designed to allow assembly operations for a single SFC
